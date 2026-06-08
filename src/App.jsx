@@ -1,10 +1,13 @@
+import { lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Highlights from './components/Highlights';
-import Model from './components/Model';
-import Features from './components/Features';
-import HowItWorks from './components/HowItWorks';
-import Footer from './components/Footer';
+import NonThreeLoader from './components/NonThreeLoader';
+
+const Hero = lazy(() => import('./components/Hero'));
+const Highlights = lazy(() => import('./components/Highlights'));
+const Model = lazy(() => import('./components/Model'));
+const Features = lazy(() => import('./components/Features'));
+const HowItWorks = lazy(() => import('./components/HowItWorks'));
+const Footer = lazy(() => import('./components/Footer'));
 
 import * as Sentry from '@sentry/react';
 
@@ -12,12 +15,14 @@ const App = () => {
   return (
     <main className="bg-black">
       <Navbar />
-      <Hero />
-      <Highlights />
-      <Model />
-      <Features />
-      <HowItWorks />
-      <Footer />
+      <Suspense fallback={<NonThreeLoader />}>
+        <Hero />
+        <Highlights />
+        <Model />
+        <Features />
+        <HowItWorks />
+        <Footer />
+      </Suspense>
     </main>
   )
 }

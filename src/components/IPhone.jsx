@@ -16,18 +16,21 @@ function Model(props) {
   const texture = useTexture(props.item.img);
 
     useEffect(() => {
-      Object.entries(materials).map((material) => {
+      const targetColor = new THREE.Color(props.item.color[0]);
+      Object.entries(materials).forEach(([name, material]) => {
         // these are the material names that can't be changed color
         if (
-          material[0] !== "zFdeDaGNRwzccye" &&
-          material[0] !== "ujsvqBWRMnqdwPx" &&
-          material[0] !== "hUlRcbieVuIiOXG" &&
-          material[0] !== "jlzuBkUzuJqgiAK" &&
-          material[0] !== "xNrofRCqOXXHVZt"
+          name !== "zFdeDaGNRwzccye" &&
+          name !== "ujsvqBWRMnqdwPx" &&
+          name !== "hUlRcbieVuIiOXG" &&
+          name !== "jlzuBkUzuJqgiAK" &&
+          name !== "xNrofRCqOXXHVZt"
         ) {
-          material[1].color = new THREE.Color(props.item.color[0]);
+          if (!material.color.equals(targetColor)) {
+            material.color = targetColor;
+            material.needsUpdate = true;
+          }
         }
-        material[1].needsUpdate = true;
       });
     }, [materials, props.item]);
   
