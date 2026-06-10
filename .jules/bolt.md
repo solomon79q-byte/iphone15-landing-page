@@ -1,0 +1,3 @@
+## 2026-06-10 - [Code Splitting for Large React/Three.js App]
+**Learning:** In a Three.js heavy React application, the initial bundle size can easily exceed 1.5MB due to large dependencies like `three`, `gsap`, and various `@react-three` libraries. By implementing `React.lazy` and `Suspense` for major sections (Highlights, Model, Features, HowItWorks), we successfully split the bundle. This reduced the initial JS load from ~1.5MB to multiple chunks, with the main entry point now at ~471kB.
+**Action:** Always consider code splitting for major route-level components or distinct page sections, especially when using heavy 3D or animation libraries. Use `Suspense` fallbacks to maintain a good user experience during chunk loading.
