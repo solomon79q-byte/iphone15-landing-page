@@ -1,5 +1,5 @@
 import { useGSAP } from '@gsap/react'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { animateWithGsap } from '../utils/animations';
 import { explore1Img, explore2Img, exploreVideo } from '../utils';
 import gsap from 'gsap';
@@ -78,7 +78,7 @@ const Features = () => {
                     <span className="text-white">
                       lightest Pro models ever.
                     </span>
-                    You'll notice the difference the moment you pick one up.
+                    You&apos;ll notice the difference the moment you pick one up.
                   </p>
                 </div>
 
