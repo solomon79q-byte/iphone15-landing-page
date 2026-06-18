@@ -1,0 +1,3 @@
+## 2025-05-14 - [Code Splitting & Memory Leak Fix]
+**Learning:** In a Three.js/React Three Fiber application, the main bundle can grow very large due to complex components and heavy dependencies like `three`. Code splitting major sections using `React.lazy` and `Suspense` is highly effective, reducing the initial bundle by ~70% (from 1.5MB to 470KB). Also, even small typos in cleanup functions (like 'reisze' instead of 'resize') can lead to memory leaks in long-lived applications.
+**Action:** Always check the bundle size of large React apps and prioritize lazy loading for below-the-fold content. Rigorously check cleanup functions in `useEffect` for typos.
