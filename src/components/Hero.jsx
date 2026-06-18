@@ -18,7 +18,8 @@ const Hero = () => {
     window.addEventListener('resize', handleVideoSrcSet);
 
     return () => {
-      window.removeEventListener('reisze', handleVideoSrcSet)
+      // Fixed typo 'reisze' to properly remove event listener and prevent memory leak
+      window.removeEventListener('resize', handleVideoSrcSet)
     }
   }, [])
 
