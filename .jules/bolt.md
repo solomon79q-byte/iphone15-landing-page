@@ -1,0 +1,3 @@
+## 2025-05-15 - Bundle Size Optimization & Memory Leak Catch
+**Learning:** In Three.js/React-Three-Fiber applications, eager loading of 3D models and heavy animation libraries (GSAP) can bloat the initial bundle significantly. Route/Component-based code splitting with `React.lazy` and `Suspense` reduced the initial payload by ~65% (1.5MB to 519KB). Additionally, typos in `removeEventListener` (e.g., 'reisze' vs 'resize') are silent killers that lead to memory leaks.
+**Action:** Always check the initial bundle size for Three.js components and verify that event listener cleanups are using the correct event names. Assign Sentry-wrapped components to a named variable before default export to satisfy `react-refresh` linting rules.
