@@ -1,0 +1,4 @@
+## 2025-05-15 - Bundle Optimization and Memory Leak Fixes
+**Learning:** Large React Three Fiber (R3F) applications can suffer from massive initial bundle sizes if 3D components are not lazily loaded. Code splitting via `React.lazy` and `Suspense` for below-the-fold sections (like Model, Features, HowItWorks) reduced the main bundle from ~1.5MB to ~519KB (~65% reduction), drastically improving Time to Interactive (TTI). Additionally, subtle typos in event listener cleanup (e.g., `'reisze'`) lead to memory leaks that are hard to detect without profiling.
+
+**Action:** Always lazy-load heavy 3D/GSAP components that aren't critical for the initial viewport. Verify event listener strings and ensure proper cleanup in `useEffect`. Configure ESLint to accommodate R3F-specific properties to avoid build noise.

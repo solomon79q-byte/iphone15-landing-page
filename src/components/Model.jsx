@@ -46,6 +46,7 @@ const Model = () => {
         duration: 2
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size])
 
   useGSAP(() => {
@@ -68,7 +69,6 @@ const Model = () => {
               controlRef={cameraControlSmall}
               setRotationState={setSmallRotation}
               item={model}
-              size={size}
             />  
 
             <ModelView 
@@ -78,7 +78,6 @@ const Model = () => {
               controlRef={cameraControlLarge}
               setRotationState={setLargeRotation}
               item={model}
-              size={size}
             />
 
             <Canvas
