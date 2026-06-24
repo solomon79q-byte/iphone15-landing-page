@@ -1,4 +1,4 @@
-import React from 'react'
+/* React removed for linting */
 import { footerLinks } from '../constants'
 
 const Footer = () => {
