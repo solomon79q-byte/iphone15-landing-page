@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei'
-import React from 'react'
+/* React removed for linting */
 
 const Loader = () => {
   return (
