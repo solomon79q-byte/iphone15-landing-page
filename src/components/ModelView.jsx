@@ -1,10 +1,10 @@
-import { Html, OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
@@ -43,4 +43,4 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
   )
 }
 
-export default ModelView
+export default memo(ModelView)
