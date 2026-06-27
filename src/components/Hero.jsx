@@ -15,10 +15,15 @@ const Hero = () => {
   }
 
   useEffect(() => {
+    /**
+     * ⚡ BOLT OPTIMIZATION: Fixed Memory Leak
+     * Why: A typo in the cleanup function ('reisze') prevented the listener
+     * from being removed, causing a memory leak on component unmount/remount.
+     */
     window.addEventListener('resize', handleVideoSrcSet);
 
     return () => {
-      window.removeEventListener('reisze', handleVideoSrcSet)
+      window.removeEventListener('resize', handleVideoSrcSet)
     }
   }, [])
 
