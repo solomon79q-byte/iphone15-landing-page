@@ -1,11 +1,14 @@
-import { Html, OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
+// ⚡ Bolt Optimization: Memoized ModelView to prevent expensive 3D re-renders
+// when parent state (like the camera position or selected model) changes.
+// eslint-disable-next-line react/prop-types
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
@@ -14,6 +17,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       className={`w-full h-full absolute ${index === 2 ? 'right-[-100%]' : ''}`}
     >
       {/* Ambient Light */}
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <ambientLight intensity={0.3} />
 
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
@@ -30,7 +34,9 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
-      <group ref={groupRef} name={`${index === 1} ? 'small' : 'large`} position={[0, 0 ,0]}>
+      {/* ⚡ Bolt Fix: Corrected the name prop logic to evaluate the ternary properly. */}
+      {/* eslint-disable-next-line react/no-unknown-property */}
+      <group ref={groupRef} name={index === 1 ? 'small' : 'large'} position={[0, 0 ,0]}>
         <Suspense fallback={<Loader />}>
           <IPhone 
             scale={index === 1 ? [15, 15, 15] : [17, 17, 17]}
@@ -43,4 +49,4 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
   )
 }
 
-export default ModelView
+export default memo(ModelView)
