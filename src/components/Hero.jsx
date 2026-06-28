@@ -18,7 +18,9 @@ const Hero = () => {
     window.addEventListener('resize', handleVideoSrcSet);
 
     return () => {
-      window.removeEventListener('reisze', handleVideoSrcSet)
+      // ⚡ Bolt Optimization: Fixed typo in event listener removal ('reisze' -> 'resize')
+      // to prevent memory leaks from accumulating listeners.
+      window.removeEventListener('resize', handleVideoSrcSet)
     }
   }, [])
 
