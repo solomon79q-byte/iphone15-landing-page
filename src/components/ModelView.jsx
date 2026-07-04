@@ -1,12 +1,15 @@
-import { Html, OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+// Performance Optimization: Use React.memo for the ModelView component.
+// This prevents unnecessary re-renders of the expensive 3D scene when parent state changes but props remain the same.
+// Impact: Reduced CPU usage and smoother frame rates during interaction.
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -41,6 +44,6 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+})
 
 export default ModelView
