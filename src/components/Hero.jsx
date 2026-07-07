@@ -18,7 +18,11 @@ const Hero = () => {
     window.addEventListener('resize', handleVideoSrcSet);
 
     return () => {
-      window.removeEventListener('reisze', handleVideoSrcSet)
+      // ⚡ Bolt: Fix typo in event listener name to prevent memory leak
+      // What: Corrected 'reisze' to 'resize'
+      // Why: The cleanup function was trying to remove a listener that didn't exist, leaving the 'resize' listener active.
+      // Impact: Prevents memory leaks and unnecessary callback executions after component unmount.
+      window.removeEventListener('resize', handleVideoSrcSet)
     }
   }, [])
 

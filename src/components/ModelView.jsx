@@ -1,12 +1,16 @@
-import { Html, OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+// ⚡ Bolt: Prevent unnecessary re-renders of the 3D scene
+// What: Wrap ModelView in React.memo
+// Why: This component is heavy as it contains a Three.js scene. Memoizing it prevents re-renders when parent state (like camera position) changes if its own props haven't changed.
+// Impact: Improves performance and responsiveness when interacting with the 3D model.
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -41,6 +45,6 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+})
 
 export default ModelView
