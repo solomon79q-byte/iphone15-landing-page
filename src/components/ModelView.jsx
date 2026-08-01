@@ -4,9 +4,20 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+/**
+ * ⚡ Bolt Performance Optimization:
+ * What: Wrap the heavy ModelView component in React.memo().
+ * Why: When the 3D model is rotated, OrbitControls triggers onEnd() which sets the rotation state
+ *      (smallRotation/largeRotation) in the parent Model component. Without memoization, updating
+ *      this parent state triggers redundant re-renders of BOTH ModelView WebGL canvases and their entire
+ *      underlying Three.js/React-Three-Fiber component sub-trees, causing performance/FPS drops during interaction.
+ * Impact/Measurement: By memoizing, ModelView re-renders are completely skipped during rotation changes (since its props
+ *      index, groupRef, gsapType, controlRef, setRotationState, size, and item remain referentially and value-wise stable).
+ *      This reduces rendering overhead of WebGL canvas frames during active interaction/dragging, keeping frames butter-smooth.
+ */
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -41,6 +52,6 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
 export default ModelView
