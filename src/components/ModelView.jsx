@@ -4,9 +4,24 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+/**
+ * @file ModelView.jsx
+ *
+ * OPTIMIZATION SUMMARY
+ * --------------------
+ * What: Wrapped the ModelView component in React.memo to prevent unnecessary re-renders.
+ * Why: The Model component updates its rotation state (smallRotation and largeRotation) via
+ *      setSmallRotation/setLargeRotation during or at the end of orbit interactions.
+ *      Without memoization, these state updates force both ModelView instances (index 1 & 2)
+ *      to re-render completely on every gesture/rotation update, which is highly expensive
+ *      due to the complex Three.js/WebGL canvas contexts.
+ * Impact/Measurement: Stops redundant, CPU-intensive canvas and 3D sub-component re-renders
+ *                      when only rotation/camera state is updated, leading to smoother
+ *                      60FPS rotation interactions and lower CPU/GPU overhead.
+ */
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -41,6 +56,8 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
-export default ModelView
+ModelView.displayName = 'ModelView';
+
+export default ModelView;
