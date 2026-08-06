@@ -4,9 +4,17 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+/**
+ * WHAT: Wrap ModelView in React.memo to prevent unnecessary re-renders.
+ * WHY: The parent component (Model) manages independent rotation states (smallRotation, largeRotation) for individual views.
+ *      When users rotate a model, parent state updates trigger re-renders of the entire ModelView component, recreation of THREE.js
+ *      lights, controls, camera, and the extremely heavy IPhone sub-components, causing noticeable frame drops/stutter.
+ * IMPACT/MEASUREMENT: Reduces the render frequency of the WebGL canvas wrapper components, improving interaction frame rate
+ *                     during model rotation and color/size toggle actions.
+ */
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -41,6 +49,6 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
 export default ModelView
