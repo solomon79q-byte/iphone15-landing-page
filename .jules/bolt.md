@@ -1,3 +1,7 @@
 ## 2025-05-14 - Implementing Code Splitting and Fixing Memory Leaks
 **Learning:** Initial bundle size was ~1.5MB, which is quite heavy for a landing page. By implementing `React.lazy` and `Suspense` for non-critical sections (Model, Features, HowItWorks), the main bundle was reduced to ~519KB. Also discovered a memory leak in `Hero.jsx` due to a typo in `removeEventListener` ('reisze' vs 'resize').
 **Action:** Always check bundle sizes before and after changes. Monitor event listener cleanup carefully to avoid memory leaks. Use `Suspense` for heavy components to improve TTI.
+
+## 2025-05-15 - Optimizing 3D Rendering, GC Allocations, and Ticker Leaks
+**Learning:** Parent state updates (such as model rotation changes) trigger component re-renders that propagate down to heavy WebGL canvas sub-trees (like `ModelView`). Without memoization, this forces expensive React virtual DOM diffing on complex ThreeJS components. Also, instantiating `new THREE.Vector3()` and `gsap.timeline()` inside render functions generates continuous heap allocation and garbage collection cycles during interactive drags. Lastly, failing to clear active GSAP tickers via `gsap.ticker.remove` leads to permanent CPU overhead on unmount.
+**Action:** Always wrap heavy ThreeJS/WebGL wrappers in `React.memo()`. Hoist static ThreeJS parameters outside of components and instantiate animation timelines exclusively within `useEffect` or event triggers. Always return a cleanup function to remove custom GSAP tickers.

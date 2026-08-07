@@ -51,10 +51,12 @@ const VideoCarousel = () => {
   useEffect(() => {
     let currentProgress = 0;
     let span = videoSpanRef.current;
+    let anim;
+    let animUpdate;
 
     if (span[videoId]) {
       // animation to move the indicator
-      let anim = gsap.to(span[videoId], {
+      anim = gsap.to(span[videoId], {
         onUpdate: () => {
           // get the progress of the video
           const progress = Math.ceil(anim.progress() * 100);
@@ -98,11 +100,13 @@ const VideoCarousel = () => {
       }
 
       // update the progress bar
-      const animUpdate = () => {
-        anim.progress(
-          videoRef.current[videoId].currentTime /
-            hightlightsSlides[videoId].videoDuration
-        );
+      animUpdate = () => {
+        if (videoRef.current && videoRef.current[videoId]) {
+          anim.progress(
+            videoRef.current[videoId].currentTime /
+              hightlightsSlides[videoId].videoDuration
+          );
+        }
       };
 
       if (isPlaying) {
@@ -113,6 +117,19 @@ const VideoCarousel = () => {
         gsap.ticker.remove(animUpdate);
       }
     }
+
+    return () => {
+      // PERFORMANCE OPTIMIZATION:
+      // What: Clean up GSAP animation and remove active tickers on unmount or dependency update.
+      // Why: Failing to remove the ticker and kill the animation can cause memory leaks and consume CPU cycles in the background.
+      // Impact: Eliminates background CPU cycles and memory leak risk.
+      if (anim) {
+        anim.kill();
+      }
+      if (animUpdate) {
+        gsap.ticker.remove(animUpdate);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId, startPlay]);
 

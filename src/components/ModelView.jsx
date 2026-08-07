@@ -4,9 +4,21 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+// PERFORMANCE OPTIMIZATION:
+// What: Hoist static ThreeJS objects outside the component render function.
+// Why: Allocating Vector3 instances on every render cycle increases garbage collection pressure,
+//      especially during frequent interactions or camera updates.
+// Impact: Reduces heap allocation frequency and prevents GC pauses.
+const targetPosition = new THREE.Vector3(0, 0, 0);
+
+// PERFORMANCE OPTIMIZATION:
+// What: Wrap ModelView in React.memo().
+// Why: Parent component 'Model' re-renders on user drag/rotation events to update rotation states,
+//      which causes both heavy ModelView components to re-render completely.
+// Impact: Prevents expensive WebGL/Three.js render cycles when rotation states update during/after drag.
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -26,7 +38,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         enableZoom={false}
         enablePan={false}
         rotateSpeed={0.4}
-        target={new THREE.Vector3(0, 0 ,0)}
+        target={targetPosition}
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
@@ -41,6 +53,8 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
-export default ModelView
+ModelView.displayName = 'ModelView';
+
+export default ModelView;

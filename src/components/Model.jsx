@@ -30,9 +30,14 @@ const Model = () => {
   const [smallRotation, setSmallRotation] = useState(0);
   const [largeRotation, setLargeRotation] = useState(0);
 
-  const tl = gsap.timeline();
-
   useEffect(() => {
+    // PERFORMANCE OPTIMIZATION:
+    // What: Move GSAP timeline instantiation from the component body to inside the useEffect block.
+    // Why: Re-instantiating gsap.timeline() on every component render (e.g. during frequent rotation updates)
+    //      is extremely wasteful since the timeline is only used when the 'size' state actually changes.
+    // Impact: Avoids redundant timeline creations and associated memory allocations on every render.
+    const tl = gsap.timeline();
+
     if(size === 'large') {
       animateWithGsapTimeline(tl, small, smallRotation, '#view1', '#view2', {
         transform: 'translateX(-100%)',
