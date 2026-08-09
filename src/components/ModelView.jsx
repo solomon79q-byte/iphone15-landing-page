@@ -1,10 +1,13 @@
+import React, { Suspense } from "react";
 import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei"
 
 import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+
+// Hoisted target vector to prevent GC allocation overhead on every render of ModelView
+const TARGET_VECTOR = new THREE.Vector3(0, 0, 0);
 
 const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
@@ -26,7 +29,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         enableZoom={false}
         enablePan={false}
         rotateSpeed={0.4}
-        target={new THREE.Vector3(0, 0 ,0)}
+        target={TARGET_VECTOR}
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
@@ -43,4 +46,6 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
   )
 }
 
-export default ModelView
+// Wrapped in React.memo to prevent unnecessary WebGL scene/canvas re-renders
+// when rotation states or unrelated parent state updates.
+export default React.memo(ModelView);
