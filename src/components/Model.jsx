@@ -30,9 +30,10 @@ const Model = () => {
   const [smallRotation, setSmallRotation] = useState(0);
   const [largeRotation, setLargeRotation] = useState(0);
 
-  const tl = gsap.timeline();
-
   useEffect(() => {
+    // Instantiated inside useEffect to avoid recreating a new GSAP timeline on every render
+    const tl = gsap.timeline();
+
     if(size === 'large') {
       animateWithGsapTimeline(tl, small, smallRotation, '#view1', '#view2', {
         transform: 'translateX(-100%)',
