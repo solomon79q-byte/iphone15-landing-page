@@ -4,9 +4,13 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import { Suspense, memo } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+// Performance Optimization: Hoist static vectors to modules to avoid garbage collection overhead in render loop.
+const ZERO_VECTOR = new THREE.Vector3(0, 0, 0);
+
+// Performance Optimization: Wrap in memo to prevent redundant re-renders of the WebGL 3D scene when parent state (like rotationState) updates.
+const ModelView = memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -26,7 +30,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         enableZoom={false}
         enablePan={false}
         rotateSpeed={0.4}
-        target={new THREE.Vector3(0, 0 ,0)}
+        target={ZERO_VECTOR}
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
@@ -41,6 +45,8 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
-export default ModelView
+ModelView.displayName = 'ModelView';
+
+export default ModelView;

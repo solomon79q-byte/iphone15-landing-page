@@ -16,20 +16,24 @@ function Model(props) {
   const texture = useTexture(props.item.img);
 
     useEffect(() => {
-      Object.entries(materials).map((material) => {
+      // Performance Optimization: Instantiate exactly ONE THREE.Color object to avoid creating multiple color objects in a loop.
+      const targetColor = new THREE.Color(props.item.color[0]);
+
+      // Performance Optimization: Use forEach instead of map to avoid creating a discarded array of undefined values.
+      Object.entries(materials).forEach(([name, material]) => {
         // these are the material names that can't be changed color
         if (
-          material[0] !== "zFdeDaGNRwzccye" &&
-          material[0] !== "ujsvqBWRMnqdwPx" &&
-          material[0] !== "hUlRcbieVuIiOXG" &&
-          material[0] !== "jlzuBkUzuJqgiAK" &&
-          material[0] !== "xNrofRCqOXXHVZt"
+          name !== "zFdeDaGNRwzccye" &&
+          name !== "ujsvqBWRMnqdwPx" &&
+          name !== "hUlRcbieVuIiOXG" &&
+          name !== "jlzuBkUzuJqgiAK" &&
+          name !== "xNrofRCqOXXHVZt"
         ) {
-          material[1].color = new THREE.Color(props.item.color[0]);
+          material.color = targetColor;
         }
-        material[1].needsUpdate = true;
+        material.needsUpdate = true;
       });
-    }, [materials, props.item]);
+    }, [materials, props.item.color]);
   
   return (
     <group {...props} dispose={null}>
