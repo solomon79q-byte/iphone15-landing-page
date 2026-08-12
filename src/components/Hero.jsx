@@ -4,21 +4,29 @@ import { heroVideo, smallHeroVideo } from '../utils';
 import { useEffect, useState } from 'react';
 
 const Hero = () => {
+  // Performance Optimization: Use window.innerWidth only for initial state
   const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)
 
-  const handleVideoSrcSet = () => {
-    if(window.innerWidth < 760) {
-      setVideoSrc(smallHeroVideo)
-    } else {
-      setVideoSrc(heroVideo)
-    }
-  }
-
   useEffect(() => {
-    window.addEventListener('resize', handleVideoSrcSet);
+    // Performance Optimization: Replacing window 'resize' event listener with a matchMedia listener.
+    // Why: The 'resize' event fires continuously on every pixel change during resizing, triggering
+    // frequent layout queries (window.innerWidth) and potential component setStates/re-renders.
+    // Using matchMedia's 'change' listener ensures the callback only runs when crossing the 760px breakpoint.
+    // Impact: Reduces CPU utilization during window resizing and eliminates unnecessary layout thrashing.
+    const mediaQuery = window.matchMedia('(max-width: 759px)');
+
+    const handleMediaChange = (e) => {
+      if (e.matches) {
+        setVideoSrc(smallHeroVideo);
+      } else {
+        setVideoSrc(heroVideo);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleMediaChange);
 
     return () => {
-      window.removeEventListener('resize', handleVideoSrcSet)
+      mediaQuery.removeEventListener('change', handleMediaChange);
     }
   }, [])
 
