@@ -10,24 +10,31 @@ import * as THREE from 'three';
 import { useEffect } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
 
+// Optimization: Pre-instantiate a single THREE.Color to avoid creating 30+ redundant color instances on every material update.
+const colorInstance = new THREE.Color();
+
 function Model(props) {
   const { nodes, materials } = useGLTF("/models/scene.glb");
 
   const texture = useTexture(props.item.img);
 
     useEffect(() => {
-      Object.entries(materials).map((material) => {
+      // Set the color value on the reusable colorInstance
+      colorInstance.set(props.item.color[0]);
+
+      // Optimization: Replace array-allocating .map() with .forEach() for better performance as we don't use the returned array.
+      Object.entries(materials).forEach(([key, material]) => {
         // these are the material names that can't be changed color
         if (
-          material[0] !== "zFdeDaGNRwzccye" &&
-          material[0] !== "ujsvqBWRMnqdwPx" &&
-          material[0] !== "hUlRcbieVuIiOXG" &&
-          material[0] !== "jlzuBkUzuJqgiAK" &&
-          material[0] !== "xNrofRCqOXXHVZt"
+          key !== "zFdeDaGNRwzccye" &&
+          key !== "ujsvqBWRMnqdwPx" &&
+          key !== "hUlRcbieVuIiOXG" &&
+          key !== "jlzuBkUzuJqgiAK" &&
+          key !== "xNrofRCqOXXHVZt"
         ) {
-          material[1].color = new THREE.Color(props.item.color[0]);
+          material.color = colorInstance;
         }
-        material[1].needsUpdate = true;
+        material.needsUpdate = true;
       });
     }, [materials, props.item]);
   

@@ -4,9 +4,13 @@ import * as THREE from 'three'
 import Lights from './Lights';
 import Loader from './Loader';
 import IPhone from './IPhone';
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 
-const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
+// Optimization: Hoist static Vector3 to a module-level constant.
+// This prevents allocating a new Vector3 object on every single frame/render cycle of the Canvas.
+const TARGET_VECTOR = new THREE.Vector3(0, 0, 0);
+
+const ModelView = React.memo(({ index, groupRef, gsapType, controlRef, setRotationState, size, item }) => {
   return (
     <View
       index={index}
@@ -26,7 +30,7 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
         enableZoom={false}
         enablePan={false}
         rotateSpeed={0.4}
-        target={new THREE.Vector3(0, 0 ,0)}
+        target={TARGET_VECTOR}
         onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
       /> 
 
@@ -41,6 +45,8 @@ const ModelView = ({ index, groupRef, gsapType, controlRef, setRotationState, si
       </group>
     </View>
   )
-}
+});
 
-export default ModelView
+ModelView.displayName = "ModelView";
+
+export default ModelView;
