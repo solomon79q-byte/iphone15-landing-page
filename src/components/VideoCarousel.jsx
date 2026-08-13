@@ -51,10 +51,12 @@ const VideoCarousel = () => {
   useEffect(() => {
     let currentProgress = 0;
     let span = videoSpanRef.current;
+    let anim;
+    let animUpdate;
 
     if (span[videoId]) {
       // animation to move the indicator
-      let anim = gsap.to(span[videoId], {
+      anim = gsap.to(span[videoId], {
         onUpdate: () => {
           // get the progress of the video
           const progress = Math.ceil(anim.progress() * 100);
@@ -98,11 +100,13 @@ const VideoCarousel = () => {
       }
 
       // update the progress bar
-      const animUpdate = () => {
-        anim.progress(
-          videoRef.current[videoId].currentTime /
-            hightlightsSlides[videoId].videoDuration
-        );
+      animUpdate = () => {
+        if (videoRef.current[videoId]) {
+          anim.progress(
+            videoRef.current[videoId].currentTime /
+              hightlightsSlides[videoId].videoDuration
+          );
+        }
       };
 
       if (isPlaying) {
@@ -113,6 +117,17 @@ const VideoCarousel = () => {
         gsap.ticker.remove(animUpdate);
       }
     }
+
+    // Optimization: Clean up the gsap ticker callback and kill active animations on unmount or videoState/play transitions
+    // to prevent background CPU utilization and memory leaks.
+    return () => {
+      if (animUpdate) {
+        gsap.ticker.remove(animUpdate);
+      }
+      if (anim) {
+        anim.kill();
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId, startPlay]);
 

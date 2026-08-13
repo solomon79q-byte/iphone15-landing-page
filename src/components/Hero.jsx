@@ -6,21 +6,29 @@ import { useEffect, useState } from 'react';
 const Hero = () => {
   const [videoSrc, setVideoSrc] = useState(window.innerWidth < 760 ? smallHeroVideo : heroVideo)
 
-  const handleVideoSrcSet = () => {
-    if(window.innerWidth < 760) {
-      setVideoSrc(smallHeroVideo)
-    } else {
-      setVideoSrc(heroVideo)
-    }
-  }
-
   useEffect(() => {
-    window.addEventListener('resize', handleVideoSrcSet);
+    // Optimization: Replace window 'resize' listener with window.matchMedia
+    // This avoids continuous layout queries and handler executions during window resizing.
+    // It only triggers updates when crossing the 760px breakpoint.
+    const mediaQuery = window.matchMedia('(max-width: 759px)');
+
+    const handleMediaQueryChange = (e) => {
+      if (e.matches) {
+        setVideoSrc(smallHeroVideo);
+      } else {
+        setVideoSrc(heroVideo);
+      }
+    };
+
+    // Set initial source if mismatch occurs
+    handleMediaQueryChange(mediaQuery);
+
+    mediaQuery.addEventListener('change', handleMediaQueryChange);
 
     return () => {
-      window.removeEventListener('resize', handleVideoSrcSet)
-    }
-  }, [])
+      mediaQuery.removeEventListener('change', handleMediaQueryChange);
+    };
+  }, []);
 
   useGSAP(() => {
     gsap.to('#hero', { opacity: 1, delay: 2 })
